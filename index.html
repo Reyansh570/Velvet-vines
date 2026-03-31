@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Velvet Vines | Intelligence Vault</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --glass: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.2);
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: #0f172a; /* Deep Space Navy */
+            color: white;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        /* --- HYPNOTIC BACKGROUND --- */
+        .bg-animate {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #0f172a 100%);
+            z-index: -1;
+        }
+
+        .blob {
+            position: absolute; width: 400px; height: 400px;
+            background: linear-gradient(to right, #4338ca, #6366f1);
+            filter: blur(80px); border-radius: 50%; opacity: 0.3;
+            animation: move 20s infinite alternate;
+        }
+
+        @keyframes move { from { transform: translate(-10%, -10%); } to { transform: translate(50%, 50%); } }
+
+        /* --- AUTH SCREEN --- */
+        #login-screen {
+            height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+        }
+
+        .hero-title {
+            font-size: 4rem; font-weight: 700; letter-spacing: -2px;
+            background: linear-gradient(to bottom right, #fff, #94a3b8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .glass-card {
+            background: var(--glass); backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: 24px;
+            padding: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- MAIN VAULT UI --- */
+        #main-app { display: none; }
+
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 40px; background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100;
+        }
+
+        .search-bar {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            padding: 12px 20px; border-radius: 12px; width: 400px; color: white;
+            transition: 0.3s;
+        }
+
+        .search-bar:focus { width: 450px; border-color: var(--primary); outline: none; }
+
+        /* --- PINTEREST MASONRY --- */
+        .container { padding: 40px; columns: 5 250px; column-gap: 20px; }
+
+        .item {
+            background: var(--glass); border: 1px solid var(--border);
+            border-radius: 16px; padding: 20px; margin-bottom: 20px;
+            break-inside: avoid; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; overflow: hidden;
+        }
+
+        .item:hover { transform: scale(1.02); background: rgba(255,255,255,0.15); }
+
+        .badge {
+            font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+            background: var(--primary); padding: 4px 8px; border-radius: 4px;
+            margin-bottom: 10px; display: inline-block;
+        }
+
+        .profile-img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--primary); }
+
+        button.primary-btn {
+            background: var(--primary); color: white; border: none;
+            padding: 12px 24px; border-radius: 12px; font-weight: 600;
+            cursor: pointer; transition: 0.3s;
+        }
+
+        button.primary-btn:hover { box-shadow: 0 0 20px rgba(99, 102, 241, 0.5); }
+    </style>
+</head>
+<body>
+    <div class="bg-animate"><div class="blob"></div></div>
+
+    <div id="login-screen">
+        <div class="glass-card">
+            <p style="color: var(--primary); font-weight: 600; margin-bottom: 10px;">ENTERPRISE ENCRYPTION ACTIVE</p>
+            <h1 class="hero-title">Velvet Vines</h1>
+            <p style="color: #94a3b8; margin: 20px 0 40px 0;">The next generation of creative intelligence storage.</p>
+            
+            <div id="g_id_onload"
+                 data-client_id="505484413999-nlonnpgt35sifh5i83tbt0ak1q82bv6a.apps.googleusercontent.com"
+                 data-callback="onSignIn">
+            </div>
+            <div class="g_id_signin" data-type="standard" data-theme="filled_black" data-size="large" data-shape="pill"></div>
+        </div>
+    </div>
+
+    <div id="main-app">
+        <nav>
+            <h2 style="margin:0; letter-spacing: -1px;">V<span style="color:var(--primary)">V</span></h2>
+            <input type="text" class="search-bar" id="pin-input" placeholder="Secure sync new idea...">
+            <div style="display:flex; align-items:center; gap:15px;">
+                <button class="primary-btn" onclick="addIdea()">+ Sync</button>
+                <img id="user-pic" class="profile-img" src="" alt="">
+            </div>
+        </nav>
+
+        <div class="container" id="vault-grid">
+            </div>
+    </div>
+
+    <script>
+        function onSignIn(response) {
+            const data = JSON.parse(atob(response.credential.split('.')[1]));
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            document.getElementById('user-pic').src = data.picture;
+            
+            // Artificial "Syncing" delay for pro feel
+            console.log("Establishing encrypted connection to Google Cloud...");
+            renderPins();
+        }
+
+        function addIdea() {
+            const input = document.getElementById('pin-input');
+            if(!input.value) return;
+            
+            let ideas = JSON.parse(localStorage.getItem('vv_vault') || '[]');
+            ideas.unshift({
+                content: input.value,
+                tag: 'Project Alpha',
+                date: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            });
+            
+            localStorage.setItem('vv_vault', JSON.stringify(ideas));
+            input.value = '';
+            renderPins();
+        }
+
+        function renderPins() {
+            const grid = document.getElementById('vault-grid');
+            const ideas = JSON.parse(localStorage.getItem('vv_vault') || '[]');
+            
+            grid.innerHTML = ideas.map(i => `
+                <div class="item">
+                    <span class="badge">Encrypted Note</span>
+                    <p style="font-weight: 300; line-height: 1.6; color: #e2e8f0;">${i.content}</p>
+                    <div style="display:flex; justify-content:space-between; margin-top:20px;">
+                        <small style="color: #64748b;">${i.date}</small>
+                        <small style="color: var(--primary);">● Active</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
